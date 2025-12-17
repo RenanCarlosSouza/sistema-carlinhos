@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Financeiro Carlinhos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>ORGANIZADOR DE EVENTOS DO CARLINHOS</h1>
+            <nav>
+                <button class="nav-btn active" onclick="mostrarTela('dashboard')">Visão Geral</button>
+                <button class="nav-btn" onclick="mostrarTela('meus-eventos')">Eventos</button>
+                <button class="nav-btn" onclick="mostrarTela('gastos')">Gastos</button>
+                <button class="nav-btn" onclick="mostrarTela('analise-evento')">Análise Evento</button>
+                <button class="nav-btn" onclick="mostrarTela('analise-mensal')">FECHAMENTO MENSAL</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section id="dashboard" class="tela ativa">
+            <h2>Painel de Controle</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>⏳ Proximos Eventos</h3>
+                    <p id="dash-qtd-eventos" style="font-size: 3rem; font-weight: bold;">0</p>
+                    <small>Preste atenção aos eventos próximos</small>
+                </div>
+                <div class="card">
+                    <h3>Status Financeiro</h3>
+                    <p>Acesse "Fechamento Mensal" para ver sua saúde financeira.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="meus-eventos" class="tela">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Gerenciar Eventos</h2>
+                <button class="btn-black" onclick="prepararNovoEvento()" style="width: auto; margin: 0;">+ Criar
+                    Novo</button>
+            </div>
+
+            <div class="grupo-evento grupo-pendente">
+                <h3 class="titulo-grupo">⏳ Em Andamento / Pendentes</h3>
+                <div class="tabela-container">
+                    <table id="tabela-pendentes">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Data</th>
+                                <th>Orçamento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grupo-evento grupo-concluido">
+                <h3 class="titulo-grupo">✅ Finalizados / Concluídos</h3>
+                <div class="tabela-container">
+                    <table id="tabela-concluidos">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Data</th>
+                                <th>Orçamento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grupo-evento grupo-cancelado">
+                <h3 class="titulo-grupo">❌ Cancelados</h3>
+                <div class="tabela-container">
+                    <table id="tabela-cancelados">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="form-evento-tela" class="tela">
+            <h2 id="titulo-form">Configurar Evento</h2>
+            <form id="form-evento">
+                <input type="hidden" id="evento-id">
+                <div class="form-group"><label>Nome</label><input type="text" id="nome-evento"></div>
+                <div class="row">
+                    <div class="form-group"><label>Data</label><input type="date" id="data-evento"></div>
+                    <div class="form-group"><label>Local</label><input type="text" id="local-evento"></div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="status-evento">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Concluido">Concluído</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Orçamento (R$)</label><input type="number" id="orcamento-previsto">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Banco</label>
+                    <select id="banco-evento">
+                        <option value="Nubank">Nubank</option>
+                        <option value="Inter">Banco Inter</option>
+                        <option value="Bradesco">Bradesco</option>
+                        <option value="Itaú">Itaú</option>
+                        <option value="Caixa">Caixa</option>
+                        <option value="Espécie">Dinheiro</option>
+                    </select>
+                </div>
+                <button type="button" class="btn-black" onclick="salvarEvento()">Salvar</button>
+            </form>
+        </section>
+
+        <section id="gastos" class="tela">
+            <h2>Lançar Gastos</h2>
+            <div class="form-group">
+                <label>Selecione o Evento:</label>
+                <select id="select-evento-gastos" onchange="carregarGastosDoEvento()"></select>
+            </div>
+
+            <div id="area-gastos" style="display:none;">
+                <div class="box-gasto">
+                    <h3>Novo Gasto</h3>
+                    <div class="row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Descrição</label>
+                            <input type="text" id="desc-gasto" placeholder="Ex: Buffet da Maria">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Categoria</label>
+                            <select id="cat-gasto">
+                                <option value="Estrutura">Estrutura/Local</option>
+                                <option value="Alimentacao">Alimentação</option>
+                                <option value="Equipe">Equipe/RH</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Valor (R$)</label>
+                            <input type="number" id="valor-gasto">
+                        </div>
+                    </div>
+                    <button class="btn-black" onclick="adicionarGasto()">Adicionar Gasto</button>
+                </div>
+                <h3 style="margin-top: 30px;">Extrato</h3>
+                <ul id="lista-gastos" class="lista-customizada"></ul>
+            </div>
+            <p id="aviso-gastos-vazio" style="text-align:center; display:none; margin-top:20px;">Nenhum evento
+                cadastrado.</p>
+        </section>
+
+        <section id="analise-evento" class="tela">
+            <h2>Análise Individual</h2>
+            <div class="form-group">
+                <label>Evento:</label>
+                <select id="select-evento-analise" onchange="carregarAnaliseDoEvento()"></select>
+            </div>
+            <div id="conteudo-analise" style="display: none;">
+                <div class="grid-cards">
+                    <div class="card">
+                        <h3>Orçamento</h3>
+                        <p id="analise-orcamento">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>Gasto Total</h3>
+                        <p id="analise-gasto">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>Saldo</h3>
+                        <p id="analise-saldo">R$ 0,00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analise-mensal" class="tela">
+            <h2>Fechamento & Previsão Mensal</h2>
+
+            <div class="box-filtro-mensal">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Mês de Referência</label>
+                        <input type="month" id="mes-referencia" onchange="calcularAnaliseMensal()">
+                    </div>
+                    <div class="form-group">
+                        <label>Meta de Gastos da Empresa (R$)</label>
+                        <input type="number" id="meta-mensal" placeholder="Ex: 50000"
+                            onchange="calcularAnaliseMensal()">
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultado-mensal" style="display:none;">
+                <div id="semaforo-box" class="semaforo-neutro">
+                    <h3 id="semaforo-titulo">AGUARDANDO DADOS</h3>
+                    <p id="semaforo-msg">---</p>
+                </div>
+
+                <div class="grid-cards" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3>💸 Total Gasto no Mês</h3>
+                        <p id="mensal-total-gasto" style="font-size: 1.5rem;">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>🏆 Melhor Evento (Lucro)</h3>
+                        <p id="mensal-melhor-evento">---</p>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Maior Categoria</h3>
+                        <p id="mensal-maior-categoria">---</p>
+                    </div>
+                </div>
+
+                <div class="relatorio-box">
+                    <h3>🔮 Mapeamento para o Próximo Mês</h3>
+                    <p id="mensal-previsao">---</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
